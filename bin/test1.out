@@ -1,0 +1,9 @@
+:: PROGRAM START
+:: TEST - CONNECTING TO DATABASE
+:: TEST - SUCCESSFULLY CONNECTED TO DATABASE
+
+Welcome to the Self Service Banking System!
+Main Menu
+1. New Customer
+2. Customer Login
+3. Exit

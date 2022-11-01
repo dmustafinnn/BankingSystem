@@ -1,9 +1,9 @@
+import java.util.Scanner;
 
 /**
  * Main entry to program.
  */
 public class ProgramLauncher {
-
 	public static void main(String argv[]) {
 		System.out.println(":: PROGRAM START");
 		
@@ -13,7 +13,8 @@ public class ProgramLauncher {
 			BankingSystem.init(argv[0]);
 			BankingSystem.testConnection();
 			System.out.println();
-			BatchInputProcessor.run(argv[0]);
+			//BatchInputProcessor.run(argv[0]);
+			P1.MainMenu();
 		}
 
 		System.out.println(":: PROGRAM END");
