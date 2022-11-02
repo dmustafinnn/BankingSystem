@@ -36,10 +36,14 @@ public class P1 {
             break;
         
         case 2:
-            /*System.out.println("Enter your Customer ID:");
+            System.out.println("Enter your Customer ID:");
             id = scanner.nextInt();
             System.out.println("Enter your PIN:");
             pin = scanner.nextInt();
+            
+            if(id == 0 && pin == 0)
+                AdminMainMenu();
+            /* 
             try {
                 Class.forName(BankingSystem.init.driver); 
                 String url = BankingSystem.init.url;
@@ -74,8 +78,10 @@ public class P1 {
         Scanner scanner = new Scanner(System.in);
         int id = 0;
         char type = 0;
-        int amount = -1;
+        int amount;
         int accNum = 0;
+        int destAccNum = 0;
+
         System.out.println("Customer Main Menu\n"
                           + "1. Open Account\n" 
                           + "2. Close Account\n" 
@@ -89,12 +95,13 @@ public class P1 {
         scanner.nextLine();
         switch(input) {
             case 1: //Open Account
-                System.out.println("Enter your Customer ID:");
+                System.out.println("Enter a customer ID:");
                 id = scanner.nextInt();
                 while(Character.toUpperCase(type) != 'C' && Character.toUpperCase(type) != 'S') { 
                     System.out.println("Would you like to open a checking(C) or saving(S) account?(C/S):");
                     type = Character.toUpperCase(scanner.next().trim().charAt(0));
                     }
+                amount = -1;
                 while(amount < 0) {
                     System.out.println("Enter an initial amount:");
                     amount = scanner.nextInt();
@@ -103,30 +110,76 @@ public class P1 {
                 //return account id 
                 break;
             case 2: //Close Account
-                System.out.println("Enter account number:");
+                System.out.println("Enter an account number:");
                 accNum = scanner.nextInt();
                 BankingSystem.closeAccount(String.valueOf(accNum));
                 break;
             case 3: //Deposit
+                System.out.println("Enter an account number:");
+                accNum = scanner.nextInt();
+                amount = -1;
+                while(amount < 0) {
+                    System.out.println("Enter a deposit:");
+                    amount = scanner.nextInt();
+                }
+                BankingSystem.deposit(String.valueOf(accNum), String.valueOf(amount));
                 break;
             case 4: //Withdraw
+                System.out.println("Enter an account number:");
+                accNum = scanner.nextInt();
+                amount = -1;
+                while(amount < 0) {
+                    System.out.println("Enter a withdrawal amount:");
+                    amount = scanner.nextInt();
+                }
+                BankingSystem.withdraw(String.valueOf(accNum), String.valueOf(amount));
                 break;
             case 5: //Transfer
+                System.out.println("Enter an account number:");
+                accNum = scanner.nextInt();
+                System.out.println("Enter a destination account number:");
+                destAccNum = scanner.nextInt();
+                amount = -1;
+                while(amount < 0) {
+                    System.out.println("Enter a transfer amount:");
+                    amount = scanner.nextInt();
+                }
+                BankingSystem.transfer(String.valueOf(accNum), String.valueOf(destAccNum), String.valueOf(amount));
                 break;
             case 6: //Account Summary
+                System.out.println("Enter a customer ID:");
+                id = scanner.nextInt();
+                BankingSystem.accountSummary(String.valueOf(id));
                 break;
-            case 7: //Exit
-                System.exit(0); 
+            case 7: //Go to MainMenu()
+                MainMenu();
+                break; 
         }
 
         scanner.close();
     }//CustomerMainMenu
     
       public static void AdminMainMenu() {
+        Scanner scanner = new Scanner(System.in);
+        int id;
         System.out.println("1. Account Summary for a Customer\n"
                           + "2. Report A :: Customer Information with Total Balance in Decreasing Order\n"
                           + "3. Report B :: Find the Average Total Balance Between Age Groups\n"
-                          + "4. Exit\n");  
+                          + "4. Exit\n");
+        int input = scanner.nextInt();
+        scanner.nextLine();
+        switch(input) {
+            case 1:
+                //Banking.accountSummary();
+                break;
+            case 2:
+                BankingSystem.reportA();
+                break;
+            case 3:
+                break;
+            case 4:
+                break;
+        }
       }//AdminMainMenu
     
 }
