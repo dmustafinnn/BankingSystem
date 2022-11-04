@@ -112,15 +112,26 @@ public class BankingSystem extends Exception {
 			stmt = con.createStatement(); 
 			
 			//Check if an account exists
-			rs = stmt.executeQuery("SELECT 1 FROM p1.account WHERE status <> 'I' AND number = " + Integer.valueOf(accNum) + " LIMIT 1");
+			rs = stmt.executeQuery("SELECT 1 FROM p1.account WHERE number = " + Integer.valueOf(accNum) + " LIMIT 1");
 			if(!rs.next())
-				throw new AccountNotExistException("Account Does Not Exits or Inactive");
+				throw new AccountNotExistException("ACCOUNT NOT FOUND\n");
+
+			//Check if an account is active
+			rs = stmt.executeQuery("SELECT status FROM p1.account WHERE number = " + Integer.valueOf(accNum));
+			while(rs.next())
+				if(rs.getString(1).charAt(0) == 'I')
+					throw new InactiveAccountException("THE ACCOUNT IS ALREADY CLOSED\n");
+			
+			//Execute the closeAccount operation
 			stmt.executeUpdate("UPDATE p1.account SET status = 'I', balance = 0 WHERE number = " + Integer.valueOf(accNum));
+
 			rs.close();                                         
 			stmt.close();                                                                           
 			con.close(); 
 			System.out.println(":: CLOSE ACCOUNT - SUCCESS\n");                                                                           
 		}catch(AccountNotExistException ex) {
+			System.out.println(ex.getMessage());
+		}catch(InactiveAccountException ex) {
 			System.out.println(ex.getMessage());
 		}catch (Exception e) {
 			System.out.println("Exception in closeAccount()");
@@ -140,14 +151,16 @@ public class BankingSystem extends Exception {
 			con = DriverManager.getConnection(url, username, password);                 
 			stmt = con.createStatement();
 
+			//Check if an account exists 
+			rs = stmt.executeQuery("SELECT 1 FROM p1.account WHERE number = " + Integer.valueOf(accNum) + " LIMIT 1");
+			if(!rs.next())
+				throw new AccountNotExistException("ACCOUNT NOT FOUND\n");
+
 			//Check if an account is active
-			/*rs = stmt.executeQuery("SELECT status FROM p1.account WHERE number = " + Integer.valueOf(accNum));
+			rs = stmt.executeQuery("SELECT status FROM p1.account WHERE number = " + Integer.valueOf(accNum));
 			while(rs.next())
 				if(rs.getString(1).charAt(0) == 'I')
-					throw new InactiveAccountException("Closed/Inactive account");*/
-			rs = stmt.executeQuery("SELECT 1 FROM p1.account WHERE status <> 'I' AND number = " + Integer.valueOf(accNum) + " LIMIT 1");
-			if(!rs.next())
-				throw new AccountNotExistException("Account Does Not Exits or Inactive");
+					throw new InactiveAccountException("ACCOUNT IS INACTIVE\n");
 			
 			//Execute a deposit operation
 			stmt.executeUpdate("UPDATE p1.account SET balance = balance + " 
@@ -158,8 +171,8 @@ public class BankingSystem extends Exception {
 			System.out.println(":: DEPOSIT - SUCCESS\n");                                                                          
 		  }catch(AccountNotExistException ex) {
 			System.out.println(ex.getMessage());
-		  //}catch(InactiveAccountException ex) {
-			//System.out.println(ex.getMessage());
+		  }catch(InactiveAccountException ex) {
+			System.out.println(ex.getMessage());
 		  }catch (Exception e) {
 			System.out.println("Exception in deposit()");
 			e.printStackTrace();
@@ -178,13 +191,18 @@ public class BankingSystem extends Exception {
 			con = DriverManager.getConnection(url, username, password);                 
 			stmt = con.createStatement(); 
 
+			//Check if an account exists 
+			rs = stmt.executeQuery("SELECT 1 FROM p1.account WHERE number = " + Integer.valueOf(accNum) + " LIMIT 1");
+			if(!rs.next())
+				throw new AccountNotExistException("ACCOUNT NOT FOUND\n");
+
 			//Check if an account is active and possess a required amount
 			rs = stmt.executeQuery("SELECT balance, status FROM p1.account WHERE number = " + Integer.valueOf(accNum));
 			while(rs.next()) {
 				if(rs.getInt(1) < Integer.valueOf(amount))
-					throw new InsufficientBalanceException("Insufficient balance");
+					throw new InsufficientBalanceException("INSUFFICIENT BALANCE\n");
 				else if(rs.getString(2).charAt(0) == 'I')
-					throw new InactiveAccountException("Closed/Inactive account");                                             
+					throw new InactiveAccountException("ACCOUNT IS INACTIVE\n");                                             
 			}
 
 			//Execute a withdrawal operation
@@ -195,6 +213,8 @@ public class BankingSystem extends Exception {
 			stmt.close();                                                                           
 			con.close(); 
 			System.out.println(":: WITHDRAW - SUCCESS\n");                                                                          
+		  }catch(AccountNotExistException ex) {
+			System.out.println(ex.getMessage());
 		  }catch(InsufficientBalanceException ex) {
 			System.out.println(ex.getMessage());
 		  }catch(InactiveAccountException ex) {
@@ -219,20 +239,30 @@ public class BankingSystem extends Exception {
 			con = DriverManager.getConnection(url, username, password);                 
 			stmt = con.createStatement();
 
+			//Check if the source account exists 
+			rs = stmt.executeQuery("SELECT 1 FROM p1.account WHERE number = " + Integer.valueOf(srcAccNum) + " LIMIT 1");
+			if(!rs.next())
+				throw new AccountNotExistException("SOURCE ACCOUNT NOT FOUND\n");
+
 			//Check if the source account is active and possess a required amount 
 			rs = stmt.executeQuery("SELECT balance, status FROM p1.account WHERE number = " + Integer.valueOf(srcAccNum));
 			while(rs.next()) {
 				if(rs.getInt(1) < Integer.valueOf(amount))
-					throw new InsufficientBalanceException("Insufficient balance");
+					throw new InsufficientBalanceException("INSUFFICIENT BALANCE\n");
 				else if(rs.getString(2).charAt(0) == 'I')
-					throw new InactiveAccountException("Source acccount is closed/inactive");                                             
+					throw new InactiveAccountException("SOURCE ACCOUNT IS INACTIVE\n");                                             
 			}
+
+			//Check if the destination account exists 
+			rs = stmt.executeQuery("SELECT 1 FROM p1.account WHERE number = " + Integer.valueOf(destAccNum) + " LIMIT 1");
+			if(!rs.next())
+				throw new AccountNotExistException("DESTINATION ACCOUNT NOT FOUND\n");
 
 			//Check if the destination account is active
 			rs = stmt.executeQuery("SELECT status FROM p1.account WHERE number = " + Integer.valueOf(destAccNum));
 			while(rs.next())
 				if(rs.getString(1).charAt(0) == 'I')
-					throw new InactiveAccountException("Destination account is closed/inactive");
+					throw new InactiveAccountException("DESTINATION ACCOUNT IS INACTIVE\n");
 
 			//Execute a transfer operation
 			stmt.executeUpdate("UPDATE p1.account SET balance = balance - " + Integer.valueOf(amount) + 
@@ -244,6 +274,8 @@ public class BankingSystem extends Exception {
 			stmt.close();                                                                           
 			con.close(); 
 			System.out.println(":: TRANSFER - SUCCESS\n");                                                                          
+		  }catch(AccountNotExistException ex) {
+			System.out.println(ex.getMessage());
 		  }catch(InsufficientBalanceException ex) {
 			System.out.println(ex.getMessage());
 		  }catch(InactiveAccountException ex) {
@@ -252,8 +284,6 @@ public class BankingSystem extends Exception {
 			System.out.println("Exception in withdraw()");
 			e.printStackTrace();
 		  }
-
-		System.out.println(":: TRANSFER - SUCCESS\n"); 
 	}//transfer
 
 	/**
@@ -269,7 +299,7 @@ public class BankingSystem extends Exception {
 			stmt = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY); 
 			rs = stmt.executeQuery("SELECT number, balance FROM p1.account WHERE status <> 'I' AND id = " + Integer.valueOf(cusID));
 			if(!rs.next())
-				System.out.println("No account exists for a customer ID: " + cusID);
+				System.out.println("NO ACCOUNT EXISTS FOR A CUSTOMER: " + cusID + "\n");
 			else {
 				rs.beforeFirst();
 				System.out.println("NUMBER\tBALANCE");
@@ -277,7 +307,7 @@ public class BankingSystem extends Exception {
 					System.out.println(rs.getInt(1) + "\t" + rs.getInt(2));
 					totalBalance += rs.getInt(2);
 				}
-				System.out.println("Total Balance: " + totalBalance);
+				System.out.println("TOTAL BALANCE: " + totalBalance + "\n");
 			}
 			rs.close();                                     
 			stmt.close();                                                                           
