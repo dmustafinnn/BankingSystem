@@ -2,6 +2,7 @@ import java.util.*;
 import java.io.*;
 
 public class P1 {
+
     public static void MainMenu() {
         Scanner scanner = new Scanner(System.in);
         String name = null;
@@ -46,6 +47,13 @@ public class P1 {
                     
                     if(id == 0 && pin == 0)
                         AdminMainMenu();
+                    else {
+                      
+
+                        CustomerMainMenu();
+                    }
+                    break;
+
                     
                     /*try {
                         Class.forName(BankingSystem.); 
@@ -67,7 +75,6 @@ public class P1 {
                         System.out.println("Exception in main()");
                         e.printStackTrace();
                     }*/
-                    CustomerMainMenu();
                     //If login is successful go to the customer main menu
                 case 3:
                     scanner.close();
@@ -100,8 +107,9 @@ public class P1 {
             scanner.nextLine();
             switch(input) {
                 case 1: //Open Account
-                    System.out.println("Enter a customer ID:"); //check if exists
+                    System.out.println("Enter a customer ID:"); 
                     id = scanner.nextInt();
+                    //check if a customer exists
                     while(Character.toUpperCase(type) != 'C' && Character.toUpperCase(type) != 'S') { 
                         System.out.println("Would you like to open a checking(C) or saving(S) account?(C/S):");
                         type = Character.toUpperCase(scanner.next().trim().charAt(0));
@@ -117,11 +125,13 @@ public class P1 {
                 case 2: //Close Account
                     System.out.println("Enter an account number:");
                     accNum = scanner.nextInt();
+                    //check if an account exists and check if an accout belongs to the current customer id 
                     BankingSystem.closeAccount(String.valueOf(accNum));
                     break;
                 case 3: //Deposit
                     System.out.println("Enter an account number:");
                     accNum = scanner.nextInt();
+                    //check if an account exists
                     amount = -1;
                     while(amount < 0) {
                         System.out.println("Enter a deposit:");
@@ -132,6 +142,7 @@ public class P1 {
                 case 4: //Withdraw
                     System.out.println("Enter an account number:");
                     accNum = scanner.nextInt();
+                    //check if an account exists
                     amount = -1;
                     while(amount < 0) {
                         System.out.println("Enter a withdrawal amount:");
@@ -140,57 +151,66 @@ public class P1 {
                     BankingSystem.withdraw(String.valueOf(accNum), String.valueOf(amount));
                     break;
                 case 5: //Transfer
-                    System.out.println("Enter an account number:");
+                    System.out.println("Enter a source account number:");
                     accNum = scanner.nextInt();
+                    //check if an account exitst 
                     System.out.println("Enter a destination account number:");
                     destAccNum = scanner.nextInt();
-                    amount = -1;
-                    while(amount < 0) {
-                        System.out.println("Enter a transfer amount:");
-                        amount = scanner.nextInt();
+                    //check if an account exists
+                    if(accNum == destAccNum)
+                        System.out.println("The source and destination accounts are the same!");
+                    else {
+                        amount = -1;
+                        while(amount < 0) {
+                            System.out.println("Enter a transfer amount:");
+                            amount = scanner.nextInt();
+                        }
+                        BankingSystem.transfer(String.valueOf(accNum), String.valueOf(destAccNum), String.valueOf(amount));
                     }
-                    BankingSystem.transfer(String.valueOf(accNum), String.valueOf(destAccNum), String.valueOf(amount));
                     break;
                 case 6: //Account Summary
                     System.out.println("Enter a customer ID:");
                     id = scanner.nextInt();
+                    //check if a customer exists before passing
                     BankingSystem.accountSummary(String.valueOf(id));
                     break;
-                case 7: //Go to MainMenu()
-                    MainMenu();
-                    break; 
+                case 7:
+                    return;
             }
         }
-        scanner.close();
     }//CustomerMainMenu
     
-      public static void AdminMainMenu() {
+    public static void AdminMainMenu() {
         Scanner scanner = new Scanner(System.in);
         int id = 0;
         int min = 0;
-        int max = 0;;
-        System.out.println("1. Account Summary for a Customer\n"
-                          + "2. Report A :: Customer Information with Total Balance in Decreasing Order\n"
-                          + "3. Report B :: Find the Average Total Balance Between Age Groups\n"
-                          + "4. Exit\n");
-        int input = scanner.nextInt();
-        switch(input) {
-            case 1:
+        int max = 0;
+        int input = 0;
 
-                break;
-            case 2:
-                BankingSystem.reportA();
-                break;
-            case 3:
-                System.out.println("Enter a minimum age:");
-                min = scanner.nextInt();
-                System.out.println("Enter a maximum age:");
-                max = scanner.nextInt();
-                BankingSystem.reportB(String.valueOf(min), String.valueOf(max));
-                break;
-            case 4:
-                break;
+        while(input != 4) {
+            System.out.println("1. Account Summary for a Customer\n"
+                            + "2. Report A :: Customer Information with Total Balance in Decreasing Order\n"
+                            + "3. Report B :: Find the Average Total Balance Between Age Groups\n"
+                            + "4. Exit\n");
+            input = scanner.nextInt();
+            switch(input) {
+                case 1:
+
+                    break;
+                case 2:
+                    BankingSystem.reportA();
+                    break;
+                case 3:
+                    System.out.println("Enter a minimum age:");
+                    min = scanner.nextInt();
+                    System.out.println("Enter a maximum age:");
+                    max = scanner.nextInt();
+                    BankingSystem.reportB(String.valueOf(min), String.valueOf(max));
+                    break;
+                case 4:
+                    return;
+            }
         }
-      }//AdminMainMenu
+    }//AdminMainMenu
     
 }
