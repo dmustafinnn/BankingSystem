@@ -2,7 +2,6 @@ import java.util.*;
 import java.io.*;
 
 public class P1 {
-
     public static void MainMenu() {
         Scanner scanner = new Scanner(System.in);
         String name = null;
@@ -109,7 +108,7 @@ public class P1 {
                 case 1: //Open Account
                     System.out.println("Enter a customer ID:"); 
                     id = scanner.nextInt();
-                    //check if a customer exists
+                    scanner.nextLine();
                     while(Character.toUpperCase(type) != 'C' && Character.toUpperCase(type) != 'S') { 
                         System.out.println("Would you like to open a checking(C) or saving(S) account?(C/S):");
                         type = Character.toUpperCase(scanner.next().trim().charAt(0));
@@ -131,7 +130,6 @@ public class P1 {
                 case 3: //Deposit
                     System.out.println("Enter an account number:");
                     accNum = scanner.nextInt();
-                    //check if an account exists
                     amount = -1;
                     while(amount < 0) {
                         System.out.println("Enter a deposit:");
@@ -142,7 +140,6 @@ public class P1 {
                 case 4: //Withdraw
                     System.out.println("Enter an account number:");
                     accNum = scanner.nextInt();
-                    //check if an account exists
                     amount = -1;
                     while(amount < 0) {
                         System.out.println("Enter a withdrawal amount:");
@@ -153,12 +150,10 @@ public class P1 {
                 case 5: //Transfer
                     System.out.println("Enter a source account number:");
                     accNum = scanner.nextInt();
-                    //check if an account exitst 
                     System.out.println("Enter a destination account number:");
                     destAccNum = scanner.nextInt();
-                    //check if an account exists
                     if(accNum == destAccNum)
-                        System.out.println("The source and destination accounts are the same!");
+                        System.out.println("THE SOURCE AND DESTINATION ACCOUNTS ARE IDENTICAL!");
                     else {
                         amount = -1;
                         while(amount < 0) {
@@ -171,7 +166,6 @@ public class P1 {
                 case 6: //Account Summary
                     System.out.println("Enter a customer ID:");
                     id = scanner.nextInt();
-                    //check if a customer exists before passing
                     BankingSystem.accountSummary(String.valueOf(id));
                     break;
                 case 7:
