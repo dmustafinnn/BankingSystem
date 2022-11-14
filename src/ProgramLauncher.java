@@ -14,6 +14,7 @@ public class ProgramLauncher {
 			BankingSystem.testConnection();
 			System.out.println();
 			//BatchInputProcessor.run(argv[0]);
+			P1.init(argv[0]);
 			P1.MainMenu();
 		}
 
